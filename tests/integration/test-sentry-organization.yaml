@@ -1,0 +1,32 @@
+- name: Testing sentry Organization module
+  hosts: localhost
+  tasks:
+
+  - name: Test Sentry Organization module - update organization
+    ridwanbejo.sentry.sentry_organization:
+      sentry_host: "http://localhost:9000"
+      sentry_token: "8702e9c2d5224b60b24d2f7a9fa486f0eaaee9748a0e4acda3ea8febdc790093"
+      name: 'My Great Company'
+      slug: 'my-great-company'
+      organization_slug: 'sentry'
+      state: present
+    register: testout
+
+  - name: dump test output
+    debug: 
+      msg: '{{ testout }}'
+
+
+  - name: Test Sentry Organization module - update organization
+    ridwanbejo.sentry.sentry_organization:
+      sentry_host: "http://localhost:9000"
+      sentry_token: "8702e9c2d5224b60b24d2f7a9fa486f0eaaee9748a0e4acda3ea8febdc790093"
+      name: 'Sentry'
+      slug: 'sentry'
+      organization_slug: 'my-great-company'
+      state: present
+    register: testout
+
+  - name: dump test output
+    debug: 
+      msg: '{{ testout }}'

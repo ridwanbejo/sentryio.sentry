@@ -1,0 +1,78 @@
+- name: Testing sentry Service Hook module
+  hosts: localhost
+  tasks:
+  - name: Test Sentry service hook module - create service hook
+    ridwanbejo.sentry.sentry_project:
+      sentry_host: "http://localhost:9000"
+      sentry_token: "8702e9c2d5224b60b24d2f7a9fa486f0eaaee9748a0e4acda3ea8febdc790093"
+      name: 'Selamat Sore'
+      slug: 'selamat-sore'
+      organization_slug: 'sentry'
+      team_slug: 'sentry'
+      state: present
+    register: testout
+
+  - name: dump test output
+    debug: 
+      msg: '{{ testout }}'
+
+  - name: Test Sentry service hook module - create service hook
+    ridwanbejo.sentry.sentry_project_service_hook:
+      sentry_host: "http://localhost:9000"
+      sentry_token: "8702e9c2d5224b60b24d2f7a9fa486f0eaaee9748a0e4acda3ea8febdc790093"
+      project_slug: 'selamat-sore'
+      organization_slug: 'sentry'
+      hook_url: 'https://example.com/sentry_hook/'
+      hook_events: 
+      - event.alert 
+      - event.created
+      state: present
+    register: testout
+
+  - name: dump test output
+    debug: 
+      msg: '{{ testout }}'
+
+  - name: Test Sentry 10 service hook module - update service hook
+    ridwanbejo.sentry.sentry_project_service_hook:
+      sentry_host: "http://localhost:9000"
+      sentry_token: "8702e9c2d5224b60b24d2f7a9fa486f0eaaee9748a0e4acda3ea8febdc790093"
+      project_slug: 'selamat-sore'
+      organization_slug: 'sentry'
+      hook_id: '4451ffd8134440d9a5e0c20e7d635234'
+      hook_url: 'https://example.com/sentry_hooks/'
+      hook_events:
+      - event.created
+      state: present
+    register: testout
+
+  - name: dump test output
+    debug: 
+      msg: '{{ testout }}'
+
+  - name: Test Sentry 10 service hook module - delete service hook
+    ridwanbejo.sentry.sentry_project_service_hook:
+      sentry_host: "http://localhost:9000"
+      sentry_token: "8702e9c2d5224b60b24d2f7a9fa486f0eaaee9748a0e4acda3ea8febdc790093"
+      project_slug: 'selamat-sore'
+      organization_slug: 'sentry'
+      hook_id: '4451ffd8134440d9a5e0c20e7d635234'
+      state: absent
+    register: testout
+
+  - name: dump test output
+    debug: 
+      msg: '{{ testout }}'
+  
+  - name: Test Sentry Project Service Hook module - delete project
+    ridwanbejo.sentry.sentry_project:
+      sentry_host: "http://localhost:9000"
+      sentry_token: "8702e9c2d5224b60b24d2f7a9fa486f0eaaee9748a0e4acda3ea8febdc790093"
+      organization_slug: 'sentry'
+      project_slug: 'selamat-sore'
+      state: absent
+    register: testout
+
+  - name: dump test output
+    debug: 
+      msg: '{{ testout }}'

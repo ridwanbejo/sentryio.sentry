@@ -1,0 +1,82 @@
+- name: Testing sentry Client Key module
+  hosts: localhost
+  tasks:
+  - name: Test Sentry 10 Client Key module - create project
+    ridwanbejo.sentry.sentry_project:
+      sentry_host: "http://localhost:9000"
+      sentry_token: "8702e9c2d5224b60b24d2f7a9fa486f0eaaee9748a0e4acda3ea8febdc790093"
+      name: 'Selamat Pagi'
+      slug: 'selamat-pagi'
+      organization_slug: 'sentry'
+      team_slug: 'sentry'
+      state: present
+    register: testout
+
+  - name: dump test output
+    debug: 
+      msg: '{{ testout }}'
+
+  - name: Test Sentry 10 Client Key module - create client key
+    ridwanbejo.sentry.sentry_project_client_key:
+      sentry_host: "http://localhost:9000"
+      sentry_token: "8702e9c2d5224b60b24d2f7a9fa486f0eaaee9748a0e4acda3ea8febdc790093"
+      project_slug: 'selamat-pagi'
+      organization_slug: 'sentry'
+      name: 'default_key'
+      is_active: true
+      state: present
+    register: testout
+
+  - name: dump test output
+    debug: 
+      msg: '{{ testout }}'
+  
+  # - set_fact:
+  #     client_key_val: "{{ testout.stdout | community.general.jc('msg.response.public') }}"
+
+  # - name: get client key value
+  #   debug:
+  #     msg: '{{ client_key_val }}'
+
+  # - name: Test Sentry 10 Client Key module - update client key
+  #   ridwanbejo.sentry.sentry_project_client_key:
+  #     sentry_host: "http://localhost:9000"
+  #     sentry_token: "8702e9c2d5224b60b24d2f7a9fa486f0eaaee9748a0e4acda3ea8febdc790093"
+  #     project_slug: 'selamat-pagi'
+  #     organization_slug: 'sentry'
+  #     client_key: '2b31e31bf52742d7a6f6b9d695c23c06'
+  #     name: 'default client key abcdef'
+  #     is_active: true
+  #     state: present
+  #   register: testout
+
+  # - name: dump test output
+  #   debug: 
+  #     msg: '{{ testout }}'
+
+  # - name: Test Sentry 10 Client Key module - delete client key
+  #   ridwanbejo.sentry.sentry_project_client_key:
+  #     sentry_host: "http://localhost:9000"
+  #     sentry_token: "8702e9c2d5224b60b24d2f7a9fa486f0eaaee9748a0e4acda3ea8febdc790093"
+  #     project_slug: 'selamat-pagi'
+  #     organization_slug: 'sentry'
+  #     client_key: 'afe0b49402a9400191797b22984ff0f8'
+  #     state: absent
+  #   register: testout
+
+  # - name: dump test output
+  #   debug: 
+  #     msg: '{{ testout }}'
+
+  - name: Test Sentry 10 Client Key module - delete project
+    ridwanbejo.sentry.sentry_project:
+      sentry_host: "http://localhost:9000"
+      sentry_token: "8702e9c2d5224b60b24d2f7a9fa486f0eaaee9748a0e4acda3ea8febdc790093"
+      organization_slug: 'sentry'
+      project_slug: 'selamat-pagi'
+      state: absent
+    register: testout
+
+  - name: dump test output
+    debug: 
+      msg: '{{ testout }}'
