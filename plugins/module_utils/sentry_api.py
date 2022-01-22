@@ -139,11 +139,18 @@ class SentryApi(object):
 
 		create_requests = requests.post(create_project_url, data=json.dumps(payload), headers=self.headers)
 
-		result['message'] = "Project has been created"
 		result['url'] = create_project_url
-		result['payload'] = payload
-		result['response'] = create_requests.json()
 		result['status_code'] = create_requests.status_code
+		result['changed'] = True
+		result['failed'] = False
+		result['message'] = "Project has been created"
+
+		if create_requests.status_code != 201:
+			result['changed'] = False
+			result['failed'] = True
+			result['message'] = "Can't create project"
+
+		result['response'] = create_requests.json()
 
 		return result
 
@@ -157,9 +164,16 @@ class SentryApi(object):
 
 		retrieve_requests = requests.get(retrieve_project_url, headers=self.headers)
 
-		result['message'] = "Project is available"
 		result['url'] = retrieve_project_url
 		result['status_code'] = retrieve_requests.status_code
+		result['changed'] = False
+		result['failed'] = False
+		result['message'] = "Project is available"
+
+		if retrieve_requests.status_code != 200:
+			result['failed'] = True
+			result['message'] = "Can't retrieve project"
+
 		result['response'] = retrieve_requests.json()
 
 		return result
@@ -182,10 +196,17 @@ class SentryApi(object):
 
 		update_requests = requests.put(update_project_url, data=json.dumps(payload), headers=self.headers)
 
-		result['changed'] = True
-		result['message'] = "Project has been updated"
 		result['url'] = update_project_url
 		result['status_code'] = update_requests.status_code
+		result['changed'] = True
+		result['failed'] = False
+		result['message'] = "Project has been updated"
+		
+		if update_requests.status_code != 200:
+			result['changed'] = False
+			result['failed'] = True
+			result['message'] = "Can't update orihect"
+
 		result['response'] = update_requests.json()
 
 		return result
@@ -200,11 +221,16 @@ class SentryApi(object):
 		delete_requests = requests.delete(delete_project_url, headers=self.headers)
 
 		result['changed'] = True
+		result['failed'] = False
 		result['message'] = "Project has been deleted"
-		result['url'] = delete_project_url
-		result['status_code'] = delete_requests.status_code
+		result['response'] = {
+			"detail": "Success"
+		}
 
 		if delete_requests.status_code != 204:
+			result['changed'] = False
+			result['failed'] = True
+			result['message'] = "Can't delete project"
 			result['response'] = delete_requests.json()
 
 		return result
@@ -222,12 +248,20 @@ class SentryApi(object):
 
 		create_requests = requests.post(create_team_url, data=json.dumps(payload), headers=self.headers)
 
-		result['message'] = "Team has been created"
 		result['url'] = create_team_url
-		result['payload'] = payload
-		result['response'] = create_requests.json()
 		result['status_code'] = create_requests.status_code
 
+		result['changed'] = True
+		result['failed'] = False
+		result['message'] = "Team has been created"
+		
+		if create_requests.status_code != 201:
+			result['changed'] = False
+			result['failed'] = True
+			result['message'] = "Can't create team"
+
+		result['response'] = create_requests.json()
+		
 		return result
 
 	def retrieve_team(self, organization_slug, team_slug):
@@ -240,9 +274,17 @@ class SentryApi(object):
 
 		retrieve_requests = requests.get(retrieve_team_url, headers=self.headers)
 
-		result['message'] = "Team is available"
 		result['url'] = retrieve_team_url
 		result['status_code'] = retrieve_requests.status_code
+		
+		result['changed'] = False
+		result['failed'] = False
+		result['message'] = "Team is available"
+		
+		if retrieve_requests.status_code != 200:
+			result['failed'] = True
+			result['message'] = "Can't retrieve team"
+
 		result['response'] = retrieve_requests.json()
 
 		return result
@@ -262,10 +304,18 @@ class SentryApi(object):
 
 		update_requests = requests.put(update_team_url, data=json.dumps(payload), headers=self.headers)
 
-		result['changed'] = True
-		result['message'] = "Team has been updated"
 		result['url'] = update_team_url
 		result['status_code'] = update_requests.status_code
+
+		result['changed'] = True
+		result['failed'] = False
+		result['message'] = "Team has been updated"
+
+		if update_requests.status_code != 200:
+			result['changed'] = False
+			result['failed'] = True
+			result['message'] = "Can't update team"
+
 		result['response'] = update_requests.json()
 
 		return result
@@ -279,12 +329,20 @@ class SentryApi(object):
 
 		delete_requests = requests.delete(delete_team_url, headers=self.headers)
 
-		result['changed'] = True
-		result['message'] = "Team has been deleted"
 		result['url'] = delete_team_url
 		result['status_code'] = delete_requests.status_code
 
+		result['changed'] = True
+		result['failed'] = False
+		result['message'] = "Team has been deleted"
+		result['response'] = {
+			"detail": "Success"
+		}
+
 		if delete_requests.status_code != 204:
+			result['changed'] = False
+			result['failed'] = True
+			result['message'] = "Can't delete team"
 			result['response'] = delete_requests.json()
 
 		return result
@@ -301,11 +359,13 @@ class SentryApi(object):
 		result['url'] = retrieve_organization_url
 		result['status_code'] = retrieve_requests.status_code
 
-		result['message'] = "Can't retrieve organization"
+		result['changed'] = False
+		result['failed'] = False
+		result['message'] = "Organization is available"
 
 		if retrieve_requests.status_code != 200:
 			result['failed'] = True
-			result['message'] = "Organization is not available"
+			result['message'] = "Can't retrieve the organization"
 
 		result['response'] = retrieve_requests.json()
 
@@ -329,9 +389,12 @@ class SentryApi(object):
 		result['status_code'] = update_requests.status_code
 
 		result['changed'] = True
+		result['failed'] = False
 		result['message'] = "Organization has been updated"
 
 		if update_requests.status_code != 200:
+			result['changed'] = False
+			result['failed'] = True
 			result['message'] = "Can't update organization"
 
 		result['response'] = update_requests.json()
@@ -353,7 +416,6 @@ class SentryApi(object):
 
 		result['message'] = "Project Client Key has been created"
 		result['url'] = create_client_key_url
-		result['payload'] = payload
 		result['response'] = create_requests.json()
 		result['status_code'] = create_requests.status_code
 
@@ -421,7 +483,6 @@ class SentryApi(object):
 
 		result['message'] = "Project Service Hook has been created"
 		result['url'] = create_service_hook_url
-		result['payload'] = payload
 		result['response'] = create_requests.json()
 		result['status_code'] = create_requests.status_code
 
@@ -446,7 +507,6 @@ class SentryApi(object):
 		result['changed'] = True
 		result['message'] = "Project Service Hook has been updated"
 		result['url'] = update_service_hook_url
-		result['payload'] = payload
 		result['response'] = update_requests.json()
 		result['status_code'] = update_requests.status_code
 

@@ -100,6 +100,39 @@ EXAMPLES = r"""
 """
 
 RETURN = r"""
+msg:
+  description:
+  - If a change was successfully applied, it will return success response with status 20x, otherwise returns response with status code 40x.
+  returned: always
+  type: complex
+  contains:
+     changed:
+       description: If process succeed, changed will be true otherwise false
+       returned:always
+       type: bool
+     failed:
+       description: failure status of this module execution
+       returned: always
+       type: bool
+     message:
+       description: Additional message along yield by this module
+       returned: always
+       type: str
+       sample: Team has been created
+     response:
+       description: Response from team related endpoints. Will vary based on the I(api_version) and I(kind). Check more response detail at https://docs.sentry.io/api/teams/
+       returned: always
+       type: complex
+     status_code:
+       description: Response status code
+       returned: always
+       type: int
+       sample: 200
+     url:
+       description: requested URL from this module
+       returned: always
+       type: str
+       sample: http://localhost:9000/api/0/organizations/sentry/teams/
 """
 
 from ansible.module_utils.basic import AnsibleModule
@@ -157,7 +190,7 @@ def run_module():
             )
 
             if result['status_code'] != 200:
-                module.fail_json(dict(message="Failed update operation", status_code=result['status_code'], detail=result['response']))
+                module.fail_json(msg=result)
 
         # a.2. if the team is exist before then update the team
         elif retrieve_requests['status_code'] == 404:
@@ -169,7 +202,7 @@ def run_module():
             )
 
             if result['status_code'] != 201:
-                module.fail_json(dict(message="Failed create operation", status_code=result['status_code'], detail=result['response']))
+                module.fail_json(msg=result)
 
     # b. if state is absent then delete the team
     elif module.params['state'] == "absent":
@@ -179,7 +212,7 @@ def run_module():
         )
 
         if result['status_code'] != 204:
-            module.fail_json(dict(message="Failed delete operation", status_code=result['status_code'], detail=result['response']))
+            module.fail_json(msg=result)
 
     module.exit_json(**result)
 

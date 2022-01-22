@@ -81,30 +81,32 @@ msg:
   type: complex
   contains:
      changed:
-       description: The versioned schema of this representation of an object.
+       description: If update process succeed, changed will be true otherwise false
        returned:always
        type: bool
      failed:
-       description: Represents the REST resource this object represents.
+       description: failure status of this module execution
        returned: always
        type: bool
      message:
-       description: Standard object metadata. Includes name, namespace, annotations, labels, etc.
+       description: Additional message along yield by this module
        returned: always
        type: str
+       sample: Organization has been updated
      response:
-       description: Specific attributes of the object. Will vary based on the I(api_version) and I(kind). Check more response detail at https://docs.sentry.io/api/organizations/update-an-organization/
+       description: Response from organization related endpoints. Will vary based on the I(api_version) and I(kind). Check more response detail at https://docs.sentry.io/api/organizations/update-an-organization/
        returned: always
        type: complex
      status_code:
-       description: Current status details for the object.
+       description: Response status code
        returned: always
        type: int
+       sample: 200
      url:
-       description: elapsed time of task in seconds
+       description: requested URL from this module
        returned: always
        type: str
-       sample: 48
+       sample: http://localhost:9000/api/0/organizations/my-great-company/
 """
 
 import requests

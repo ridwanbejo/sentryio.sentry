@@ -184,7 +184,7 @@ def run_module():
             )
 
             if result['status_code'] != 200:
-                module.fail_json(dict(message="Failed update operation", status_code=result['status_code'], response=result['response']))
+                module.fail_json(msg=result)
 
         # a.2. if the project is exist before then update the project
         elif retrieve_requests['status_code'] == 404:
@@ -197,7 +197,7 @@ def run_module():
             )
 
             if result['status_code'] != 201:
-                module.fail_json(dict(message="Failed create operation", status_code=result['status_code'], detail=result['response']))
+                module.fail_json(msg=result)
 
     # b. if state is absent then delete the project
     elif module.params['state'] == "absent":
@@ -207,7 +207,7 @@ def run_module():
         )
 
         if result['status_code'] != 204:
-            module.fail_json(dict(message="Failed delete operation", status_code=result['status_code'], detail=result['response']))
+            module.fail_json(msg=result)
 
     module.exit_json(**result)
 
