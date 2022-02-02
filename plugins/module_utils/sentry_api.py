@@ -414,10 +414,18 @@ class SentryApi(object):
 
 		create_requests = requests.post(create_client_key_url, data=json.dumps(payload), headers=self.headers)
 
-		result['message'] = "Project Client Key has been created"
 		result['url'] = create_client_key_url
-		result['response'] = create_requests.json()
 		result['status_code'] = create_requests.status_code
+		result['changed'] = True
+		result['failed'] = False
+		result['message'] = "Project Client Key has been created"
+
+		if create_requests.status_code != 201:
+			result['changed'] = False
+			result['failed'] = True
+			result['message'] = "Can't create client key"
+
+		result['response'] = create_requests.json()
 
 		return result
 
@@ -437,10 +445,17 @@ class SentryApi(object):
 
 		update_requests = requests.put(update_client_key_url, data=json.dumps(payload), headers=self.headers)
 
-		result['changed'] = True
-		result['message'] = "Project Client Key has been updated"
 		result['url'] = update_client_key_url
 		result['status_code'] = update_requests.status_code
+		result['changed'] = True
+		result['failed'] = False
+		result['message'] = "Project Client Key has been updated"
+
+		if update_requests.status_code != 200:
+			result['changed'] = False
+			result['failed'] = True
+			result['message'] = "Can't update client key"
+
 		result['response'] = update_requests.json()
 
 		return result
@@ -456,12 +471,20 @@ class SentryApi(object):
 
 		delete_requests = requests.delete(delete_client_key_url, headers=self.headers)
 
-		result['changed'] = True
-		result['message'] = "Project Client Key has been deleted"
 		result['url'] = delete_client_key_url
 		result['status_code'] = delete_requests.status_code
 
+		result['changed'] = True
+		result['failed'] = False
+		result['message'] = "Project Client Key has been deleted"
+		result['response'] = {
+			"detail": "Success"
+		}
+
 		if delete_requests.status_code != 204:
+			result['changed'] = False
+			result['failed'] = True
+			result['message'] = "Can't delete client key"
 			result['response'] = delete_requests.json()
 
 		return result
@@ -481,11 +504,19 @@ class SentryApi(object):
 
 		create_requests = requests.post(create_service_hook_url, data=json.dumps(payload), headers=self.headers)
 
-		result['message'] = "Project Service Hook has been created"
 		result['url'] = create_service_hook_url
-		result['response'] = create_requests.json()
 		result['status_code'] = create_requests.status_code
+		result['changed'] = True
+		result['failed'] = False
+		result['message'] = "Project Service Hook has been created"
 
+		if create_requests.status_code != 201:
+			result['changed'] = False
+			result['failed'] = True
+			result['message'] = "Can't create service hook"
+
+		result['response'] = create_requests.json()
+		
 		return result
 
 	def update_service_hook(self, organization_slug, project_slug, hook_id, hook_url, hook_events):
@@ -504,11 +535,18 @@ class SentryApi(object):
 
 		update_requests = requests.put(update_service_hook_url, data=json.dumps(payload), headers=self.headers)
 
-		result['changed'] = True
-		result['message'] = "Project Service Hook has been updated"
 		result['url'] = update_service_hook_url
-		result['response'] = update_requests.json()
 		result['status_code'] = update_requests.status_code
+		result['changed'] = True
+		result['failed'] = False
+		result['message'] = "Project Service Hook has been updated"
+
+		if update_requests.status_code != 200:
+			result['changed'] = False
+			result['failed'] = True
+			result['message'] = "Can't update service hook"
+
+		result['response'] = update_requests.json()
 
 		return result
 
@@ -523,12 +561,20 @@ class SentryApi(object):
 
 		delete_requests = requests.delete(delete_service_hook_url, headers=self.headers)
 
-		result['changed'] = True
-		result['message'] = "Project Service Hook has been deleted"
 		result['url'] = delete_service_hook_url
 		result['status_code'] = delete_requests.status_code
 
+		result['changed'] = True
+		result['failed'] = False
+		result['message'] = "Project Service Hook has been deleted"
+		result['response'] = {
+			"detail": "Success"
+		}
+
 		if delete_requests.status_code != 204:
+			result['changed'] = False
+			result['failed'] = True
+			result['message'] = "Can't delete service hook"
 			result['response'] = delete_requests.json()
 
 		return result
